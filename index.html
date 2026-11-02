@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Open Dome Ring · Spline Editor</title>
+<meta name="description" content="Shape an open dome ring with independent spline controls for band height and thickness. Export the current design as OBJ or STL.">
+<style>
+*{box-sizing:border-box}
+body{margin:0;height:100dvh;display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-rows:minmax(0,1fr);background:#ece9e3;color:#38352f;font:14px system-ui}
+button,select,input{font:inherit;color:inherit}
+button,select,input[type=number]{background:#faf9f6;border:1px solid #c9c4ba;border-radius:6px;padding:7px 10px}
+button,select{cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+button:hover:enabled{background:#fff;border-color:#938779}
+button.primary{background:#3f6b80;color:white;border-color:#3f6b80}
+#viewport{position:relative;min-height:0;min-width:0;overflow:hidden}
+#viewport canvas{display:block;touch-action:none}
+#status{position:absolute;bottom:18px;left:20px;right:20px;white-space:pre-line;color:#6e675d;pointer-events:none;font-size:12px}
+aside{background:#faf9f6;border-left:1px solid #d6d0c7;padding:22px 18px;overflow:auto}
+h2{font-size:17px;margin:0 0 8px;font-weight:550}
+.hint{color:#746c61;font-size:12px;line-height:1.5;margin:8px 0 14px}
+.row{display:flex;align-items:center;gap:8px;margin:12px 0;flex-wrap:wrap}
+.row label{flex:1}
+select,input[type=number]{max-width:100%}
+.full{width:100%}
+input[type=range]{width:100%;accent-color:#3f6b80}
+.buttons{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.check{display:flex;gap:8px;align-items:center;margin:12px 0}
+#graph{width:100%;height:220px;touch-action:none;outline:none;user-select:none;border:1px solid #ded9cf;border-radius:8px;background:white}
+#graph:focus{border-color:#3f6b80}
+#graph text{font:12px system-ui;fill:#8b8275;pointer-events:none}
+#graph circle{cursor:grab}
+#graph circle:hover{stroke:#fff;stroke-width:3}
+#error{color:#a34330;min-height:18px;font-size:12px}
+hr{border:0;border-top:1px solid #ded9cf;margin:20px 0}
+@media(max-width:850px){body{grid-template-columns:1fr;grid-template-rows:minmax(330px,58dvh) minmax(260px,42dvh);height:auto;min-height:100dvh}
+aside{border-left:0;border-top:1px solid #d6d0c7}
+}
+</style>
+<main id="viewport" aria-label="Interactive ring preview">
+<div id="status">Loading ring…</div>
+</main>
+<aside aria-label="Spline controls">
+<h2>Band height envelope</h2>
+<p class="hint">Shape the band's height along the finger-hole axis: broad shoulders, a slim middle and tapered tips. Control each side independently.</p>
+<label>Parameter <select id="channel" class="full">
+<option value="width">Band height · shoulders and taper</option>
+<option value="thickness">Metal thickness · optional</option>
+</select>
+</label>
+<label class="check">
+<input type="checkbox" id="handles" checked>Show 3D envelope</label>
+<svg id="graph" viewBox="0 0 440 250" tabindex="0" aria-label="Spline envelope graph">
+</svg>
+<p class="hint">Double-click to add a knot. Use arrow keys to move the selected knot, or Delete to remove it. The end and middle knots stay fixed along the arc.</p>
+<label>Knot <select aria-label="Envelope knot" id="node-select" class="full">
+</select>
+</label>
+<div class="row">
+<label for="node-value">Band height, mm</label>
+<input id="node-value" type="number" step="0.05" style="width:100px">
+</div>
+<input id="node-range" type="range" step="0.01" aria-label="Selected knot value">
+<div class="row">
+<label for="node-position">Position along arc, %</label>
+<input id="node-position" type="number" min="-100" max="100" step="1" style="width:100px">
+</div>
+<label class="check">
+<input type="checkbox" id="symmetry">Link sides symmetrically</label>
+<p class="hint">Linking mirrors the selected half onto the other side. The original model has independent sides.</p>
+<div class="buttons">
+<button id="remove-node">Delete knot</button>
+<button id="undo">↶ Undo</button>
+<button id="redo">↷ Redo</button>
+</div>
+<div id="error" role="status">
+</div>
+<hr>
+<h2>Save design</h2>
+<p class="hint">Your profile is saved in this browser. Use JSON to transfer knots between sessions. OBJ preserves the current shape and smooth vertex normals. Dimensions are in millimetres.</p>
+<div class="buttons">
+<button id="save-envelope">Profile JSON ↓</button>
+<button id="load-envelope">Load JSON</button>
+<button id="export-obj" class="primary">Export OBJ ↓</button>
+<button id="export-stl">Export STL ↓</button>
+<button id="reset">Reset shape</button>
+</div>
+<input id="envelope-file" type="file" accept=".json,application/json" hidden>
+</aside>
+<script type="module" src="./src/main.js">
+</script>
+</html>

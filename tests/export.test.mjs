@@ -17,7 +17,7 @@ test('OBJ roundtrip retains deformed vertices, smooth normals and face reference
   assert.notDeepEqual(positions.array,originalPositions);
   assert.notDeepEqual(normals.array,originalNormals);
   const ring=new THREE.Group(),mesh=new THREE.Mesh(geometry);
-  ring.position.set(2,3,4);ring.rotation.set(Math.PI/2,0,.2);ring.scale.set(1,1.2,.9);ring.add(mesh);
+  ring.position.set(2,3,4);ring.rotation.set(Math.PI/2,0,Math.PI);ring.scale.set(1,1.2,.9);ring.add(mesh);
   const text=exportEnvelopeOBJ(ring),lines=text.split('\n');
   assert.equal(lines.filter(l=>l.startsWith('vn ')).length,normals.count);
   assert.equal(lines.filter(l=>l.startsWith('f ')).length,geometry.index.count/3);

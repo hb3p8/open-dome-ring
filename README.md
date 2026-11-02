@@ -8,6 +8,8 @@ The ring lies in XY, with its hole axis along Z. Horizontal orbit drags rotate
 around Z, following the ring plane; vertical drags tilt the view. The same
 orientation is included in OBJ and STL exports. Spline deformation operates in
 the base mesh's local frame, including its transformed smooth normals.
+The editable contour faces up in the default view. Portrait viewports keep the
+entire ring in frame while retaining orbit zoom controls.
 
 ## Run locally
 

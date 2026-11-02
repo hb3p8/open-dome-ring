@@ -33,9 +33,9 @@ try {
   gltf.scene.rotation.x = Math.PI / 2; // glTF Y-up back to the CAD frame, hole along Y.
   gltf.scene.updateMatrixWorld(true);
   const ring=new THREE.Group(),surfaces=[];
-  // Rotate the CAD XZ ring plane to XY; the hole and orbit axis are now Z.
+  // Place the ring in XY and turn it over so the editable contour faces up.
   // Keep vertex deformation in its original CAD frame inside this group.
-  ring.rotation.x=Math.PI/2;
+  ring.rotation.set(Math.PI/2,0,Math.PI);
   gltf.scene.traverse(object=>{
     if(!object.isMesh)return;
     const geometry=object.geometry.clone().applyMatrix4(object.matrixWorld),mesh=new THREE.Mesh(geometry,material);
@@ -70,7 +70,9 @@ try {
   function resize() {
     const width=viewport.clientWidth,height=viewport.clientHeight;
     renderer.setSize(width,height);
-    camera.aspect = width / height; camera.updateProjectionMatrix(); pipeline.invalidate();
+    camera.aspect = width / height;
+    camera.zoom = Math.min(1,camera.aspect); // Keep the full ring in tall viewports.
+    camera.updateProjectionMatrix(); pipeline.invalidate();
   }
   const observer=new ResizeObserver(resize);observer.observe(viewport);
   orbit.addEventListener('change', () => pipeline.invalidate());
